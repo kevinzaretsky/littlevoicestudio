@@ -1,0 +1,7 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "sqlite"; url = "file:./dev.db" }
+model Product { id String @id @default(cuid()) slug String @unique name String shape String sizeMM Int description String basePriceCents Int colors String[] epoxyEnabled Boolean @default(true) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt }
+model ShippingOption { id String @id @default(cuid()) carrier String name String priceCents Int currency String domesticOnly Boolean @default(true) active Boolean @default(true) }
+model Customer { id String @id @default(cuid()) email String @unique firstName String? lastName String? address String? city String? postal String? country String? phone String? createdAt DateTime @default(now()) }
+model Order { id String @id @default(cuid()) orderNumber String @unique customerEmail String customerName String? status String @default("NEW") shippingName String? shippingPriceCents Int @default(0) shippingAddress String? notes String? trackingCode String? shippedAt DateTime? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt items OrderItem[] }
+model OrderItem { id String @id @default(cuid()) orderId String order Order @relation(fields: [orderId], references: [id]) productSlug String color String epoxy Boolean unitPriceCents Int qty Int imagePublicIds String[] }

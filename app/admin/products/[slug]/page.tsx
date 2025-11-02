@@ -1,0 +1,1 @@
+import { prisma } from '@/lib/db'; import ProductForm from '../product-form'; export default async function EditProduct({ params }:{ params:{ slug:string } }){ const p = await prisma.product.findUnique({ where:{ slug: params.slug } }); if (!p) return <div>Not found</div>; return <ProductForm product={p} /> }

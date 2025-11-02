@@ -1,0 +1,1 @@
+export default function Page(){ return <div className='prose'><h1>Danke!</h1><p>Bestellung erfolgreich.</p></div>; }
