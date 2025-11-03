@@ -1,1 +1,0 @@
-export default function Page(){ return <div className='prose'><h1>Abgebrochen</h1><p>Du hast die Kasse verlassen.</p></div>; }
