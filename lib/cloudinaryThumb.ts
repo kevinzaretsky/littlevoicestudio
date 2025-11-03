@@ -1,1 +1,0 @@
-export function cloudThumb(publicId: string){ const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME; if (!cloud) return null; return `https://res.cloudinary.com/${cloud}/image/upload/f_auto,q_auto,w_160/${publicId}`; }
