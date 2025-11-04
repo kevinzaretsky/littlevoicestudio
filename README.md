@@ -28,3 +28,4 @@ npm run dev
 - `app/page.tsx`: customizer UI (size, epoxy, color, quantity, upload)
 - `app/api/checkout/route.ts`: Stripe Checkout session
 - No `cart/`, `admin/`, or `product/` routes.
+# redeploy test
