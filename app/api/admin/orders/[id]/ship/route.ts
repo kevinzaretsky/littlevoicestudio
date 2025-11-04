@@ -1,1 +1,0 @@
-import { NextRequest, NextResponse } from 'next/server'; import { prisma } from '@/lib/db'; export async function POST(req: NextRequest, { params }:{ params:{ id:string } }){ await prisma.order.update({ where:{ id: params.id }, data:{ shippedAt:new Date(), status:'SHIPPED' } }); return NextResponse.redirect(new URL(`/admin/orders/${params.id}`, req.url)); }
