@@ -48,5 +48,11 @@ const de = {
   delete: 'Löschen'
 } as const;
 
-export type Dict = typeof en;
-export async function getDict(locale: Locale): Promise<Dict> { return locale === 'de' ? de : en; }
+// Make Dict be "same keys as EN, values are generic strings"
+export type Dict = { [K in keyof typeof en]: string };
+
+// Cast the chosen dictionary to that widened type
+export async function getDict(locale: Locale): Promise<Dict> {
+  return (locale === 'de' ? de : en) as Dict;
+}
+
