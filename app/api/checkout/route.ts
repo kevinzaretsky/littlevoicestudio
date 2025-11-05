@@ -26,13 +26,18 @@ export async function POST(req: Request) {
     quantity: i.quantity,
   }));
 
-  // Add a flat-rate shipping line (DHL)
+  // Add a flat-rate shipping line (DHL) — keep metadata shape identical
   line_items.push({
     price_data: {
       currency: 'eur',
       product_data: {
         name: 'Versand (DHL)',
-        metadata: { productId: 'shipping', type: 'shipping' },
+        metadata: {
+          productId: 'shipping',
+          color: '',
+          size: '',
+          customizationUrl: '',
+        },
       },
       unit_amount: 499, // 4.99 €
     },
