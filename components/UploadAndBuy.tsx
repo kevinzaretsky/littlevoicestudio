@@ -18,9 +18,11 @@ type Product = {
 export default function UploadAndBuy({
   product,
   dict,
+  locale,
 }: {
   product: Product;
   dict: Dict;
+  locale: 'en' | 'de';
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -40,16 +42,14 @@ export default function UploadAndBuy({
       }
       setUploading(true);
 
-      // 1) ask our server for a short-lived Cloudinary signature
+      // 1) get signature
       const sigRes = await fetch('/api/upload/sign', { cache: 'no-store' });
       const sigJson = await sigRes.json();
-      if (!sigRes.ok || !sigJson.ok) {
-        throw new Error(sigJson?.error || 'Failed to get upload signature');
-      }
+      if (!sigRes.ok || !sigJson?.ok) throw new Error(sigJson?.error || 'Failed to get upload signature');
 
       const { cloudName, apiKey, folder, timestamp, signature } = sigJson;
 
-      // 2) upload directly from browser to Cloudinary
+      // 2) upload to Cloudinary
       const fd = new FormData();
       fd.append('file', file);
       fd.append('api_key', apiKey);
@@ -60,9 +60,7 @@ export default function UploadAndBuy({
       const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
       const up = await fetch(uploadUrl, { method: 'POST', body: fd });
       const upJson = await up.json();
-      if (!up.ok) {
-        throw new Error(upJson?.error?.message || 'Cloudinary upload failed');
-      }
+      if (!up.ok) throw new Error(upJson?.error?.message || 'Cloudinary upload failed');
 
       setUploadedUrl(upJson.secure_url);
     } catch (e: any) {
@@ -75,11 +73,11 @@ export default function UploadAndBuy({
   async function addToCart() {
     try {
       setError(null);
-      // Simple cart stored in localStorage for this starter (your app may differ)
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
       cart.push({
         productId: product.id,
+        slug: product.slug,
         name: product.name,
         priceCents: product.priceCents,
         color,
@@ -89,7 +87,7 @@ export default function UploadAndBuy({
       });
 
       localStorage.setItem('cart', JSON.stringify(cart));
-      window.location.href = `/${'en'}/cart`; // you can pass locale dynamically if needed
+      window.location.href = `/${locale}/cart`;
     } catch (e: any) {
       setError(e?.message || 'Could not add to cart');
     }
@@ -97,15 +95,10 @@ export default function UploadAndBuy({
 
   return (
     <div className="space-y-4">
-      {/* Color */}
       {product.colorOptions?.length > 0 && (
         <div>
           <label className="block text-sm font-medium mb-1">{dict?.color || 'Color'}</label>
-          <select
-            className="border rounded px-3 py-2 w-full"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-          >
+          <select className="border rounded px-3 py-2 w-full" value={color} onChange={(e) => setColor(e.target.value)}>
             {product.colorOptions.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
@@ -113,15 +106,10 @@ export default function UploadAndBuy({
         </div>
       )}
 
-      {/* Size */}
       {product.sizeOptions?.length > 0 && (
         <div>
           <label className="block text-sm font-medium mb-1">{dict?.size || 'Size'}</label>
-          <select
-            className="border rounded px-3 py-2 w-full"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-          >
+          <select className="border rounded px-3 py-2 w-full" value={size} onChange={(e) => setSize(e.target.value)}>
             {product.sizeOptions.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
@@ -129,24 +117,12 @@ export default function UploadAndBuy({
         </div>
       )}
 
-      {/* Upload */}
       {product.hasUpload && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            {dict?.uploadLabel || 'Upload your image (JPG/PNG/PDF)'}
-          </label>
-          <input
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
+          <label className="block text-sm font-medium">{dict?.uploadLabel || 'Upload your image (JPG/PNG/PDF)'}</label>
+          <input type="file" accept="image/*,application/pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           <div className="flex gap-3">
-            <button
-              type="button"
-              className="btn"
-              onClick={handleUpload}
-              disabled={!file || uploading}
-            >
+            <button type="button" className="btn" onClick={handleUpload} disabled={!file || uploading}>
               {uploading ? (dict?.uploading || 'Uploading…') : (dict?.upload || 'Upload')}
             </button>
             {uploadedUrl && (
@@ -155,9 +131,7 @@ export default function UploadAndBuy({
               </a>
             )}
           </div>
-          {!!error && (
-            <div className="text-sm text-red-600">{error}</div>
-          )}
+          {!!error && <div className="text-sm text-red-600">{error}</div>}
         </div>
       )}
 
