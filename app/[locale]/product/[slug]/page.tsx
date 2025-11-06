@@ -4,12 +4,18 @@ import { prisma } from '@/lib/db';
 import Image from 'next/image';
 import UploadAndBuy from '@/components/UploadAndBuy';
 import { notFound } from 'next/navigation';
-import { getMessages } from '@/messages';
+import { getDict } from '@/i18n/dictionaries';
 
-export default async function ProductDetail({ params }: { params: { slug: string; locale: 'en' | 'de' } }) {
+export default async function ProductDetail({
+  params,
+}: {
+  params: { slug: string; locale: 'en' | 'de' };
+}) {
   const product = await prisma.product.findUnique({ where: { slug: params.slug } });
   if (!product) return notFound();
-  const t = getMessages(params.locale);
+
+  const t = await getDict(params.locale);
+
   return (
     <div className="grid md:grid-cols-2 gap-8">
       <div className="card">
