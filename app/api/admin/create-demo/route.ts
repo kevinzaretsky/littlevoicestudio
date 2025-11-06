@@ -5,16 +5,13 @@ export const runtime = 'nodejs';
 
 export async function POST() {
   try {
-    // avoid duplicate slug
-    const existing = await prisma.product.findUnique({
-      where: { slug: 'symbol-board' },
-    });
-    if (existing) {
-      return NextResponse.json({ ok: true, message: 'demo product already exists' });
-    }
-
-    const created = await prisma.product.create({
-      data: {
+    const created = await prisma.product.upsert({
+      where: { slug: 'symbol-board' },       // slug is unique in Prisma schema
+      update: {
+        // keep it minimal; you can add fields to update later
+        updatedAt: new Date(),
+      },
+      create: {
         name: 'Symbol Board',
         slug: 'symbol-board',
         description: 'A customizable symbol board',
