@@ -1,34 +1,37 @@
 export const runtime = 'nodejs';
 
 import { prisma } from '@/lib/db';
-import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import UploadAndBuy from '@/components/UploadAndBuy';
+import { notFound } from 'next/navigation';
 import { getDict } from '@/i18n/dictionaries';
 
-export default async function ProductPage({ params }: { params: { locale: 'en'|'de'; slug: string } }) {
+export default async function ProductDetail({
+  params,
+}: {
+  params: { slug: string; locale: 'en' | 'de' };
+}) {
+  const product = await prisma.product.findUnique({ where: { slug: params.slug } });
+  if (!product) return notFound();
+
   const dict = await getDict(params.locale);
-  let product: any = null;
-
-  try {
-    product = await prisma.product.findUnique({ where: { slug: params.slug } });
-  } catch (e) {
-    console.error('Product page DB error:', e);
-    // Give a friendly page instead of hard crash
-  }
-
-  if (!product) notFound();
-
-  // Defensive defaults (avoid .map on null)
-  product.colorOptions = Array.isArray(product.colorOptions) ? product.colorOptions : [];
-  product.sizeOptions  = Array.isArray(product.sizeOptions)  ? product.sizeOptions  : [];
-  product.description  = product.description ?? '';
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-      <p className="text-gray-600 mb-6">{product.description}</p>
-
-      <UploadAndBuy product={product} dict={dict} />
+    <div className="grid md:grid-cols-2 gap-8">
+      <div className="card">
+        {product.imageUrl ? (
+          <div className="relative w-full h-96">
+            <Image src={product.imageUrl} alt={product.name} fill className="object-contain" />
+          </div>
+        ) : (
+          <div className="h-96 grid place-items-center text-gray-400">No image</div>
+        )}
+      </div>
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold">{product.name}</h1>
+        <p className="text-gray-600">{product.description}</p>
+        <UploadAndBuy product={product as any} dict={dict as any} locale={params.locale} />
+      </div>
     </div>
   );
 }
