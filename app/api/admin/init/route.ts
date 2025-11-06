@@ -38,65 +38,18 @@ export async function POST() {
       );
     `);
 
-    // Ensure ALL expected columns exist with the right types/defaults
+    // Ensure all expected columns exist (idempotent)
     await prisma.$executeRawUnsafe(`
-      DO $$
-      BEGIN
-        -- Product.priceCents
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='priceCents') THEN
-          ALTER TABLE "Product" ADD COLUMN "priceCents" INTEGER NOT NULL DEFAULT 0;
-        END IF;
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "priceCents"   INTEGER        NOT NULL DEFAULT 0;
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "colorOptions" TEXT[]         NOT NULL DEFAULT ARRAY[]::TEXT[];
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "sizeOptions"  TEXT[]         NOT NULL DEFAULT ARRAY[]::TEXT[];
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "hasUpload"    BOOLEAN        NOT NULL DEFAULT TRUE;
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "imageUrl"     TEXT;
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "description"  TEXT;
+      ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "updatedAt"    TIMESTAMP(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
-        -- Product.colorOptions
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='colorOptions') THEN
-          ALTER TABLE "Product" ADD COLUMN "colorOptions" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
-        END IF;
-
-        -- Product.sizeOptions
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='sizeOptions') THEN
-          ALTER TABLE "Product" ADD COLUMN "sizeOptions" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
-        END IF;
-
-        -- Product.hasUpload
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='hasUpload') THEN
-          ALTER TABLE "Product" ADD COLUMN "hasUpload" BOOLEAN NOT NULL DEFAULT TRUE;
-        END IF;
-
-        -- Product.imageUrl
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='imageUrl') THEN
-          ALTER TABLE "Product" ADD COLUMN "imageUrl" TEXT;
-        END IF;
-
-        -- Product.description
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='description') THEN
-          ALTER TABLE "Product" ADD COLUMN "description" TEXT;
-        END IF;
-
-        -- Product.slug (ensure exists; unique constraint can be added later if missing)
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='slug') THEN
-          ALTER TABLE "Product" ADD COLUMN "slug" TEXT NOT NULL;
-        END IF;
-
-        -- Product.name
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='name') THEN
-          ALTER TABLE "Product" ADD COLUMN "name" TEXT NOT NULL DEFAULT 'Product';
-        END IF;
-
-        -- Product.updatedAt (ensure present)
-        IF NOT EXISTS (SELECT 1 FROM information_schema.columns
-                       WHERE table_name='Product' AND column_name='updatedAt') THEN
-          ALTER TABLE "Product" ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
-        END IF;
-      END
-      $$;
+      -- ensure slug is unique (index is fine; Prisma also enforces at app level)
+      CREATE UNIQUE INDEX IF NOT EXISTS "idx_product_slug" ON "Product"("slug");
     `);
 
     return NextResponse.json({ ok: true });
