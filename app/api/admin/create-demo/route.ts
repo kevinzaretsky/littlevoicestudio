@@ -6,11 +6,8 @@ export const runtime = 'nodejs';
 export async function POST() {
   try {
     const created = await prisma.product.upsert({
-      where: { slug: 'symbol-board' },       // slug is unique in Prisma schema
-      update: {
-        // keep it minimal; you can add fields to update later
-        updatedAt: new Date(),
-      },
+      where: { slug: 'symbol-board' }, // requires slug unique (we have it)
+      update: { updatedAt: new Date() }, // idempotent
       create: {
         name: 'Symbol Board',
         slug: 'symbol-board',
@@ -22,12 +19,8 @@ export async function POST() {
         imageUrl: 'https://res.cloudinary.com/demo/image/upload/v1699999999/sample.jpg',
       },
     });
-
     return NextResponse.json({ ok: true, created });
   } catch (e: any) {
-    return NextResponse.json(
-      { ok: false, error: e?.message || String(e) },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: e?.message || String(e) }, { status: 500 });
   }
 }
