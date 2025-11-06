@@ -14,7 +14,7 @@ export default async function ProductDetail({
   const product = await prisma.product.findUnique({ where: { slug: params.slug } });
   if (!product) return notFound();
 
-  const t = await getDict(params.locale);
+  const dict = await getDict(params.locale);
 
   return (
     <div className="grid md:grid-cols-2 gap-8">
@@ -30,7 +30,8 @@ export default async function ProductDetail({
       <div className="space-y-4">
         <h1 className="text-3xl font-bold">{product.name}</h1>
         <p className="text-gray-600">{product.description}</p>
-        <UploadAndBuy product={product} t={t} />
+        {/* UploadAndBuy currently expects { product, dict } */}
+        <UploadAndBuy product={product} dict={dict} />
       </div>
     </div>
   );
