@@ -1,20 +1,11 @@
-// app/api/health/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
-
 export const runtime = 'nodejs';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    return NextResponse.json({
-      ok: true,
-      envHasDatabaseUrl: !!process.env.DATABASE_URL,
-    });
-  } catch (err: any) {
-    return NextResponse.json(
-      { ok: false, message: err?.message || 'Unknown DB error' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({
+    cloudName: !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    apiKey: !!process.env.CLOUDINARY_API_KEY,
+    apiSecret: !!process.env.CLOUDINARY_API_SECRET,
+    folder: process.env.CLOUDINARY_FOLDER || 'littlevoicestudio/uploads',
+  });
 }
