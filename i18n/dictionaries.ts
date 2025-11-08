@@ -35,6 +35,21 @@ export type Dict = {
   // Success page
   successHeading: string;
   successText: string;
+
+  // Admin / shop
+  adminTitle: string;
+  createProduct: string;
+  productList: string;
+  edit: string;
+  save: string;
+  cancel: string;
+  description: string;
+  price: string;
+  image: string;
+  actions: string;
+
+  // Errors
+  notFound: string;
 };
 
 const en: Dict = {
@@ -68,6 +83,19 @@ const en: Dict = {
   successHeading: 'Thank you! 🎉',
   successText:
     'Your order was received. You will get a confirmation email shortly.',
+
+  adminTitle: 'Admin Panel',
+  createProduct: 'Create new product',
+  productList: 'Product list',
+  edit: 'Edit',
+  save: 'Save',
+  cancel: 'Cancel',
+  description: 'Description',
+  price: 'Price (€)',
+  image: 'Image',
+  actions: 'Actions',
+
+  notFound: 'Product not found.',
 };
 
 const de: Dict = {
@@ -101,6 +129,19 @@ const de: Dict = {
   successHeading: 'Danke! 🎉',
   successText:
     'Deine Bestellung ist eingegangen. Du erhältst in Kürze eine Bestätigungs-E-Mail.',
+
+  adminTitle: 'Admin-Bereich',
+  createProduct: 'Neues Produkt erstellen',
+  productList: 'Produktliste',
+  edit: 'Bearbeiten',
+  save: 'Speichern',
+  cancel: 'Abbrechen',
+  description: 'Beschreibung',
+  price: 'Preis (€)',
+  image: 'Bild',
+  actions: 'Aktionen',
+
+  notFound: 'Produkt nicht gefunden.',
 };
 
 export async function getDict(locale: Locale): Promise<Dict> {
