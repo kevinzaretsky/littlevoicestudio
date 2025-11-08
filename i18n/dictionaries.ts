@@ -1,58 +1,108 @@
-import type { Locale } from './config';
+// i18n/dictionaries.ts
 
-const en = {
+export type Locale = 'en' | 'de';
+
+export type Dict = {
+  // Brand / hero
+  brand: string;
+  tagline: string;
+  subline: string;
+
+  // Common UI
+  color: string;
+  size: string;
+  delete: string;
+  remove: string;
+  total: string;
+  shipping: string;
+  cart: string;
+  yourCartEmpty: string;
+  checkout: string;
+  clear: string;
+  redirecting: string;
+
+  // Product / upload
+  uploadLabel: string;
+  upload: string;
+  uploading: string;
+  viewUpload: string;
+  uploadChooseFile: string;
+  pleaseUploadFirst: string;
+  uploadFailed: string;
+  addToCart: string;
+  addToCartFailed: string;
+
+  // Success page
+  successHeading: string;
+  successText: string;
+};
+
+const en: Dict = {
   brand: 'LittleVoiceStudio',
   tagline: 'Bloom of understanding 🌿',
-  subline: 'Build custom symbol boards and order them with your photos. Upload, customize, and check out securely.',
-  shopNow: 'Shop now',
-  admin: 'Admin',
-  cart: 'Cart',
-  cartTitle: 'Cart',
-  yourCartIsEmpty: 'Your cart is empty.',
-  remove: 'Remove',
-  clear: 'Clear',
-  checkout: 'Checkout',
-  uploadToCloudinary: 'Upload to Cloudinary',
-  uploading: 'Uploading…',
-  addToCart: 'Add to Cart',
-  noProducts: 'No products yet. Go to Admin to add one.',
-  noImage: 'No image',
-  thankYou: 'Thank you! ✅',
-  successText: 'We received your order. Stripe has sent a confirmation to your email.',
-  shippingDHL: 'Shipping (DHL)',
-  view: 'View',
-  delete: 'Delete'
-} as const;
+  subline:
+    'Build custom symbol boards and order them with your photos. Upload, customize, and check out securely.',
 
-const de = {
+  color: 'Color',
+  size: 'Size',
+  delete: 'Delete',
+  remove: 'Remove',
+  total: 'Total',
+  shipping: 'Shipping (DHL)',
+  cart: 'Your cart',
+  yourCartEmpty: 'Your cart is empty.',
+  checkout: 'Checkout',
+  clear: 'Clear',
+  redirecting: 'Redirecting…',
+
+  uploadLabel: 'Upload your image (JPG/PNG/PDF)',
+  upload: 'Upload',
+  uploading: 'Uploading…',
+  viewUpload: 'View upload',
+  uploadChooseFile: 'Please choose a file first.',
+  pleaseUploadFirst: 'Please upload an image first.',
+  uploadFailed: 'Upload failed',
+  addToCart: 'Add to cart',
+  addToCartFailed: 'Could not add to cart',
+
+  successHeading: 'Thank you! 🎉',
+  successText:
+    'Your order was received. You will get a confirmation email shortly.',
+};
+
+const de: Dict = {
   brand: 'LittleVoiceStudio',
   tagline: 'Blüte des Verstehens 🌿',
-  subline: 'Erstelle individuelle Symboltafeln mit deinen Fotos. Hochladen, anpassen und sicher bezahlen.',
-  shopNow: 'Jetzt shoppen',
-  admin: 'Admin',
-  cart: 'Warenkorb',
-  cartTitle: 'Warenkorb',
-  yourCartIsEmpty: 'Dein Warenkorb ist leer.',
+  subline:
+    'Erstelle individuelle Symboltafeln mit deinen Fotos. Hochladen, anpassen und sicher bezahlen.',
+
+  color: 'Farbe',
+  size: 'Größe',
+  delete: 'Löschen',
   remove: 'Entfernen',
-  clear: 'Leeren',
+  total: 'Gesamt',
+  shipping: 'Versand (DHL)',
+  cart: 'Warenkorb',
+  yourCartEmpty: 'Dein Warenkorb ist leer.',
   checkout: 'Zur Kasse',
-  uploadToCloudinary: 'Zu Cloudinary hochladen',
-  uploading: 'Lädt hoch…',
+  clear: 'Leeren',
+  redirecting: 'Weiterleiten…',
+
+  uploadLabel: 'Lade dein Bild hoch (JPG/PNG/PDF)',
+  upload: 'Hochladen',
+  uploading: 'Wird hochgeladen…',
+  viewUpload: 'Upload ansehen',
+  uploadChooseFile: 'Bitte wähle zuerst eine Datei aus.',
+  pleaseUploadFirst: 'Bitte lade zuerst ein Bild hoch.',
+  uploadFailed: 'Upload fehlgeschlagen',
   addToCart: 'In den Warenkorb',
-  noProducts: 'Noch keine Produkte. Gehe zu Admin, um eines anzulegen.',
-  noImage: 'Kein Bild',
-  thankYou: 'Vielen Dank! ✅',
-  successText: 'Wir haben deine Bestellung erhalten. Stripe hat eine Bestätigung an deine E-Mail gesendet.',
-  shippingDHL: 'Versand (DHL)',
-  view: 'Ansehen',
-  delete: 'Löschen'
-} as const;
+  addToCartFailed: 'Konnte nicht zum Warenkorb hinzufügen',
 
-// Make Dict be "same keys as EN, values are generic strings"
-export type Dict = { [K in keyof typeof en]: string };
+  successHeading: 'Danke! 🎉',
+  successText:
+    'Deine Bestellung ist eingegangen. Du erhältst in Kürze eine Bestätigungs-E-Mail.',
+};
 
-// Cast the chosen dictionary to that widened type
 export async function getDict(locale: Locale): Promise<Dict> {
-  return (locale === 'de' ? de : en) as Dict;
+  return locale === 'de' ? de : en;
 }
-
